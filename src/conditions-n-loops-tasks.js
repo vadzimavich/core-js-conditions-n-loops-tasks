@@ -158,42 +158,52 @@ function convertToRomanNumerals(num) {
  *  '1950.2'  => 'one nine five zero point two'
  */
 function convertNumberToString(numberStr) {
-  const digitToWord = {
-    0: 'zero',
-    1: 'one',
-    2: 'two',
-    3: 'three',
-    4: 'four',
-    5: 'five',
-    6: 'six',
-    7: 'seven',
-    8: 'eight',
-    9: 'nine',
-    '-': 'minus',
-    '.': 'point',
-    ',': 'point', // Handling '-', '.', and ',' symbols
-  };
+  const digitsToWords = [
+    'zero',
+    'one',
+    'two',
+    'three',
+    'four',
+    'five',
+    'six',
+    'seven',
+    'eight',
+    'nine',
+  ];
 
   let result = '';
-  let isDecimal = false;
 
   for (let i = 0; i < numberStr.length; i += 1) {
     const char = numberStr[i];
-
-    if (Object.prototype.hasOwnProperty.call(digitToWord, char)) {
-      result += `${digitToWord[char]} `;
-      if (char === '.' || char === ',') {
-        isDecimal = true;
-      }
+    const digit = parseInt(char, 10);
+    switch (char) {
+      case '.':
+      case ',':
+        result += `point `;
+        break;
+      case '-':
+        result += `minus `;
+        break;
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+        if (i === numberStr.length - 1) {
+          result += `${digitsToWords[digit]}`;
+        } else {
+          result += `${digitsToWords[digit]} `;
+        }
+        break;
+      default:
+        break;
     }
   }
-
-  if (isDecimal) {
-    result = result.trim();
-  } else {
-    result = result.trimRight();
-  }
-
   return result;
 }
 
@@ -209,8 +219,14 @@ function convertNumberToString(numberStr) {
  *  '0123210'   => true
  *  'qweqwe'    => false
  */
-function isPalindrome(/* str */) {
-  throw new Error('Not implemented');
+function isPalindrome(str) {
+  let reverse = '';
+
+  for (let i = str.length - 1; i >= 0; i -= 1) {
+    reverse += str[i];
+  }
+
+  return str === reverse;
 }
 
 /**
@@ -227,8 +243,14 @@ function isPalindrome(/* str */) {
  *  'qwerty', 'Q'     => -1
  *  'qwerty', 'p'     => -1
  */
-function getIndexOf(/* str, letter */) {
-  throw new Error('Not implemented');
+function getIndexOf(str, letter) {
+  for (let i = 0; i < str.length; i += 1) {
+    if (str[i] === letter) {
+      return i;
+    }
+  }
+
+  return -1;
 }
 
 /**
