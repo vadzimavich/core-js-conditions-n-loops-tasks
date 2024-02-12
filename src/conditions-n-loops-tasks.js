@@ -340,39 +340,42 @@ function getBalanceIndex(arr) {
 function getSpiralMatrix(size) {
   const matrix = [];
   for (let i = 0; i < size; i += 1) {
-    matrix.push(new Array(size));
+    matrix[i] = [];
+    for (let j = 0; j < size; j += 1) {
+      matrix[i][j] = 0;
+    }
   }
 
-  let counter = 1;
-  let startRow = 0;
-  let endRow = size - 1;
-  let startCol = 0;
-  let endCol = size - 1;
+  let currentNumber = 1;
+  let top = 0;
+  let bottom = size - 1;
+  let left = 0;
+  let right = size - 1;
 
-  while (startRow <= endRow && startCol <= endCol) {
-    for (let i = startCol; i <= endCol; i += 1) {
-      counter += 1;
-      matrix[startRow][i] = counter;
+  while (currentNumber <= size * size) {
+    for (let i = left; i <= right && currentNumber <= size * size; i += 1) {
+      matrix[top][i] = currentNumber;
+      currentNumber += 1;
     }
-    startRow += 1;
+    top += 1;
 
-    for (let i = startRow; i <= endRow; i += 1) {
-      counter += 1;
-      matrix[i][endCol] = counter;
+    for (let i = top; i <= bottom && currentNumber <= size * size; i += 1) {
+      matrix[i][right] = currentNumber;
+      currentNumber += 1;
     }
-    endCol -= 1;
+    right -= 1;
 
-    for (let i = endCol; i >= startCol; i -= 1) {
-      counter += 1;
-      matrix[endRow][i] = counter;
+    for (let i = right; i >= left && currentNumber <= size * size; i -= 1) {
+      matrix[bottom][i] = currentNumber;
+      currentNumber += 1;
     }
-    endRow -= 1;
+    bottom -= 1;
 
-    for (let i = endRow; i >= startRow; i -= 1) {
-      counter += 1;
-      matrix[i][startCol] = counter;
+    for (let i = bottom; i >= top && currentNumber <= size * size; i -= 1) {
+      matrix[i][left] = currentNumber;
+      currentNumber += 1;
     }
-    startCol += 1;
+    left += 1;
   }
 
   return matrix;
@@ -425,10 +428,45 @@ function rotateMatrix(matrix) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(/* arr */) {
-  throw new Error('Not implemented');
-}
+function sortByAsc(arr) {
+  if (arr.length <= 1) return arr;
 
+  const arrayAsc = arr;
+
+  function quickSort(start, end) {
+    const pivot = arrayAsc[Math.floor((start + end) / 2)];
+    let left = start;
+    let right = end;
+
+    while (left <= right) {
+      while (arrayAsc[left] < pivot) {
+        left += 1;
+      }
+      while (arrayAsc[right] > pivot) {
+        right -= 1;
+      }
+
+      if (left <= right) {
+        const temp = arrayAsc[left];
+        arrayAsc[left] = arrayAsc[right];
+        arrayAsc[right] = temp;
+        left += 1;
+        right -= 1;
+      }
+    }
+
+    if (start < left - 1) {
+      quickSort(start, left - 1);
+    }
+    if (end > left) {
+      quickSort(left, end);
+    }
+  }
+
+  quickSort(0, arrayAsc.length - 1);
+
+  return arrayAsc;
+}
 /**
  * Shuffles characters in a string so that the characters with an odd index are moved to the end of the string at each iteration.
  * Take into account that the string can be very long and the number of iterations is large. Consider how you can optimize your solution.
@@ -488,8 +526,42 @@ function shuffleChar(str, iterations) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  const string = String(number);
+  let result = '';
+  const storage = [Number(string[string.length - 1])];
+
+  for (let i = string.length - 2; i >= 0; i -= 1) {
+    const currentDigit = Number(string[i]);
+    const maxInStorage = Math.max.apply(null, storage);
+
+    if (currentDigit < maxInStorage) {
+      storage.push(currentDigit);
+      storage.sort((a, b) => a - b);
+
+      let index = 0;
+      for (index = storage.length - 1; index >= 0; index -= 1) {
+        if (storage[index] === currentDigit) {
+          index += 1;
+          break;
+        }
+      }
+
+      for (let j = 0; j < i; j += 1) {
+        result += string[j];
+      }
+      result += `${storage[index]}`;
+      for (let k = 0; k < storage.length; k += 1) {
+        if (k !== index) {
+          result += `${storage[k]}`;
+        }
+      }
+      break;
+    } else {
+      storage.push(currentDigit);
+    }
+  }
+  return Number(result);
 }
 
 module.exports = {
